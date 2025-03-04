@@ -31,8 +31,13 @@ impl<T> Stack<T> {
 		self.size += 1;
 	}
 	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+		if self.size > 0 {
+            self.size -= 1;
+            let res_ref = self.data.remove(self.size);
+            Some(res_ref)
+        } else {
+            None
+        }
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -101,8 +106,61 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
 fn bracket_match(bracket: &str) -> bool
 {
-	//TODO
-	true
+	const LEFT_BRACH: char = '{';
+    const RIGHT_BRACH: char = '}';
+    const LEFT_SQBRACH: char = '[';
+    const RIGHT_SQBRACH: char = ']';
+    const LEFT_SMBRACH: char = '(';
+    const RIGHT_SMBRACH: char = ')';
+
+    const PUSH_STACK_CHARS: [char; 3] = [LEFT_BRACH, LEFT_SMBRACH, LEFT_SQBRACH];
+    const POP_STACK_CHARS: [char; 3] = [RIGHT_BRACH, RIGHT_SMBRACH, RIGHT_SQBRACH];
+    let mut bracket_stack = Stack::new();
+    let mut is_match = true;
+    for c in bracket.chars() {
+        if PUSH_STACK_CHARS.contains(&c) {
+            bracket_stack.push(c);
+        } else if POP_STACK_CHARS.contains(&c) {
+            let bracket_peek = bracket_stack.peek();
+            match bracket_peek {
+                Some(peek_char) => match peek_char {
+                    &LEFT_BRACH => {
+                        if RIGHT_BRACH.eq(&c) {
+                           let _= bracket_stack.pop();
+                            continue;
+                        } else {
+                            is_match = false;
+                            break;
+                        }
+                    }
+                    &LEFT_SMBRACH => {
+                        if RIGHT_SMBRACH.eq(&c) {
+                            let _= bracket_stack.pop();
+                            continue;
+                        } else {
+                            is_match = false;
+                            break;
+                        }
+                    }
+                    &LEFT_SQBRACH => {
+                        if RIGHT_SQBRACH.eq(&c) {
+                            let _= bracket_stack.pop();
+                            continue;
+                        } else {
+                            is_match = false;
+                            break;
+                        }
+                    }
+                    _ => {}
+                },
+                None => {
+                    is_match = false;
+                    break;
+                }
+            }
+        }
+    }
+    is_match && bracket_stack.is_empty()
 }
 
 #[cfg(test)]

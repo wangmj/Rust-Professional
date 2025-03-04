@@ -68,14 +68,29 @@ impl<T> myStack<T> {
     }
     pub fn push(&mut self, elem: T) {
         //TODO
+        self.q1.enqueue(elem);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        while self.q1.size() > 1 {
+            match self.q1.dequeue() {
+                Ok(t) => self.q2.enqueue(t),
+                Err(_) => {}
+            }
+        }
+        let res = match self.q1.dequeue() {
+            Ok(val) => Ok(val),
+            Err(_) => Err("Stack is empty"),
+        };
+        if !self.q2.is_empty() {
+            while let Ok(t) = self.q2.dequeue() {
+                self.q1.enqueue(t)
+            }
+        }
+        res
     }
     pub fn is_empty(&self) -> bool {
 		//TODO
-        true
+        self.q1.is_empty()
     }
 }
 
