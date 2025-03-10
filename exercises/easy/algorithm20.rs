@@ -11,7 +11,15 @@ use std::fmt::{self, Display, Formatter};
 
 pub fn get_sum(a: i32, b: i32) -> i32 {
     // TODO: Implement the logic to calculate the sum of two integers without using `+`
-    0 // Placeholder return value
+    let mut c=a;
+    let mut d=b;
+    while d!=0{
+        let sum_without_carry=c^d;
+        let carry=(c&d)<<1;
+        c=sum_without_carry;
+        d=carry;
+    }
+    c
 }
 
 #[cfg(test)]
